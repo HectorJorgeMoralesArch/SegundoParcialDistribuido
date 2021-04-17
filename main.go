@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 // User: Structure to store users info
@@ -33,6 +34,7 @@ func main() {
 	router.HandleFunc("/Token", token)
 	http.ListenAndServe(":5000", router)
 }
+<<<<<<< HEAD
 func login() {
 
 }
@@ -43,6 +45,18 @@ func status() {
 
 }
 func addImage() {
+=======
+func login(w http.ResponseWriter, r *http.Request){
+
+}
+func logout(w http.ResponseWriter, r *http.Request){
+
+}
+func status(w http.ResponseWriter, r *http.Request){
+
+}
+func addImage(w http.ResponseWriter, r *http.Request){
+>>>>>>> 18b11f2c8643e6420f665e468ac7a2523f33ef1e
 
 }
 func token() {
