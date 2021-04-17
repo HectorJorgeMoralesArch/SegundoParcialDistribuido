@@ -1,16 +1,17 @@
 package main
 
 import (
-	"net/http"
-
+	"fmt"
+	"crypto/rand"
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
 )
 
 // User: Structure to store users info
 type User struct {
-	Username string
-	Password string
+	UID 	 string
+	Pass	 string
 	Token    string
 }
 
@@ -22,8 +23,8 @@ var user User
 
 func main() {
 	// User and password registered
-	user.Username = "PIPO"
-	user.Password = "123"
+	user.UID = "PIPO"
+	user.Pass = "123"
 	router := mux.NewRouter()
 	//All routes for API
 	//Need functions
@@ -47,10 +48,16 @@ func status() {
 func addImage() {
 =======
 func login(w http.ResponseWriter, r *http.Request){
-
+	var userW User
+	if user.UID == userW.UID && user.Pass == userW.Pass{
+		user.Token=token()
+	}else{
+		fmt.Println("Wrong Data")
+	}
 }
 func logout(w http.ResponseWriter, r *http.Request){
-
+	user.Token=""
+	fmt.Println("Logged out")
 }
 func status(w http.ResponseWriter, r *http.Request){
 
@@ -60,5 +67,6 @@ func addImage(w http.ResponseWriter, r *http.Request){
 
 }
 func token() {
-
+	token:=make([]byte, 4)
+	return rand.Read(token)
 }
