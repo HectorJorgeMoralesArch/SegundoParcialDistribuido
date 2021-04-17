@@ -49,6 +49,7 @@ func addImage() {
 =======
 func login(w http.ResponseWriter, r *http.Request){
 	var userW User
+	json.NewDecoder(r.Body).Decode(&userW)
 	if user.UID == userW.UID && user.Pass == userW.Pass{
 		user.Token=token()
 	}else{
