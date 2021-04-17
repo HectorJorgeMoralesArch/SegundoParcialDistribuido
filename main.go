@@ -27,3 +27,18 @@ func main() {
 	router.HandleFunc("/Token",token)
 	http.ListenAndServe(":5000",router)
 }
+func login(){
+
+}
+func logout(){
+
+}
+func status(){
+
+}
+func addImage(){
+
+}
+func token(){
+
+}
