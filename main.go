@@ -5,8 +5,11 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
 	"github.com/gorilla/mux"
+	"log"
 )
 
 // Logged: Structure to store logged in users info
@@ -144,11 +147,6 @@ func status(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(msg))
 	return
 }
-
-func addImage(w http.ResponseWriter, r *http.Request) {
-
-}
-
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 // GenerateRandomString generate a string of random characters of given length
@@ -160,4 +158,67 @@ func GenerateRandomString(n int) string {
 		sb.WriteByte(letterBytes[idx])
 	}
 	return sb.String()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Receive image and return name and size of it
+func addImage(w http.ResponseWriter, r *http.Request) {
+	var img Image
+	json.NewDecoder(r.Body).Decode(&img)
+	if img.Token == user.Token {
+		msg=`
+		{
+			"Message": "An image has been successfully uploaded",
+			"Filename": "`+img.Name+`",
+			"Size": "`+getImageSize(img.Name)+`",
+			"Width": "`+getImageDimension(img.Name)[0]+`",
+			"Height": "`+getImageDimension(img.Name)[1]+`",
+		}
+		`
+	}else{
+		msg := `
+		{
+			"Please enter a valid token"
+		}
+		`
+	}
+	w.Write([]byte(msg))
+	return
+}
+// Retrieve image size
+func getImageSize(imgPath string) (int64){
+	fi, err := os.Stat(imgPath);
+	if err != nil {
+		log.err("%s: %v\n", imgPath, err)
+	}
+	// Get the size
+	size := fi.Size()
+	return size
+}
+
+// Get image dimensions
+func getImageDimension(imgPath string) (int, int) {
+	fi, err := os.Open(imgPath)
+	defer fi.Close()
+	if err != nil {
+		log.err("%s: %v\n", imgPath, err)
+	}
+
+	image, _, err := image.DecodeConfig(fi)
+	if err != nil {
+		log.err("%s: %v\n", imgPath, err)
+	}
+	return image.Width, image.Height
 }
