@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	_ "image/jpeg"
 	_ "image/png"
 	"log"
@@ -20,16 +19,6 @@ var online = make(map[string]string)
 //Users: stores all users, key Username, value is Password
 var users = make(map[string]string)
 
-<<<<<<< HEAD
-type Image struct {
-	Path, Name string
-=======
-type Image struct{
-	Token, Path, Name string
->>>>>>> 50cc80c1d9df1500acf5f4666b6c40cb17d4459d
-	x, y, size int
-}
-
 // Global variable user. All functions are able to access to it
 func main() {
 	router := mux.NewRouter()
@@ -39,7 +28,7 @@ func main() {
 	router.HandleFunc("/login", login)
 	router.HandleFunc("/logout", logout)
 	router.HandleFunc("/status", status)
-	router.HandleFunc("/upload", addImage)
+	router.HandleFunc("/upload", upload)
 	http.ListenAndServe(":8080", router)
 }
 
@@ -175,36 +164,43 @@ func GenerateRandomString(n int) string {
 }
 
 // Receive image and return name and size of it
-func addImage(w http.ResponseWriter, r *http.Request) {
-	var img Image
-	msg := ""
-	json.NewDecoder(r.Body).Decode(&img)
-	if img.Token == users.Token {
-<<<<<<< HEAD
-		msg = `
-		{
-			"Message": "An image has been successfully uploaded",
-			"Filename": "` + img.Name + `",
-			"Size": "` + getImageSize(img.Name) + `",
-=======
-		w,h:=getImageDimension(img.Name)
-		msg=`
-		{
-			"Message": "An image has been successfully uploaded",
-			"Filename": "`+img.Name+`",
-			"Size": "`+getImageSize(img.Name)+`",
-			"Width": "`+w+`",
-			"Height": "`+h+`",
->>>>>>> 50cc80c1d9df1500acf5f4666b6c40cb17d4459d
-		}
-		`
-	} else {
-		msg = `
-		{
-			"Please enter a valid token"
-		}
-		`
+func upload(w http.ResponseWriter, r *http.Request) {
+	token := r.Header.Get("Authorization")
+	if len(token) < 7 {
+		w.WriteHeader(http.StatusUnauthorized)
+		msg := `
+	{
+		"Please enter a token" ` + token + `
 	}
+`
+		w.Write([]byte(msg))
+		return
+	}
+	token = token[7:]
+	if !loggedIn(token) {
+		w.WriteHeader(http.StatusUnauthorized)
+		msg := `
+	{
+		"Please enter a valid token"
+	}
+`
+		w.Write([]byte(msg))
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	_, imgData, err := r.FormFile("data")
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		msg := `
+	{
+		"There was an error while parsing the image"
+		"Error:" "` + err + `"
+	}
+`
+		w.Write([]byte(msg))
+		return
+	}
+
 	w.Write([]byte(msg))
 	return
 }
