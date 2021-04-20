@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strings"
+	"strconv"
 	"time"
 	//If it says that Go could not found the mrepository just type
 	//go get github.com/gorilla/mux
@@ -17,8 +18,8 @@ import (
 //Logout
 //curl -H "Authorization: Bearer ONRhfKsUOH" http://localhost:8080/logout
 //Upload
-//curl -F 'dc-labs/challenges/second-partial/test.jpg' -H "Authorization: Bearer ONRhfKsUOH" http://localhost:8080/upload
-//curl -F 'dc-labs/challenges/second-partial/architecture.png' -H "Authorization: Bearer ONRhfKsUOH" http://localhost:8080/upload
+//curl -F 'data=dc-labs/challenges/second-partial/test.jpg' -H "Authorization: Bearer ONRhfKsUOH" http://localhost:8080/upload
+//curl -F 'data=dc-labs/challenges/second-partial/architecture.png' -H "Authorization: Bearer ONRhfKsUOH" http://localhost:8080/upload
 //Status
 //curl -H "Authorization: Bearer ONRhfKsUOH" http://localhost:8080/status
 
@@ -220,7 +221,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 {
 	"message": "An image has been successfully uploaded",
 	"filename": "`+imgData.Filename+`",
-	"size": "`+string(imgData.Size)+`kb"
+	"size": "`+strconv.FormatInt(imgData.Size,10)+`kb"
 }
 `
 	w.Write([]byte(msg))
