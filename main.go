@@ -17,10 +17,9 @@ var online = make(map[string]string)
 
 var users = make(map[string]string)
 
-struct Image{
-	var Token,Name
-	x:=0
-	y:=0
+Type Image struct{
+	Token,Name string
+	x,y int
 }
 // Global variable user. All functions are able to access to it
 func main() {
