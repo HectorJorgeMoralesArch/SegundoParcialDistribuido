@@ -207,7 +207,7 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 func getImageSize(imgPath string) (int64){
 	fi, err := os.Stat(imgPath);
 	if err != nil {
-		log.err(err)
+		log.Fatal(err)
 	}
 	// Get the size
 	size := fi.Size()
@@ -219,12 +219,12 @@ func getImageDimension(imgPath string) (int, int) {
 	fi, err := os.Open(imgPath)
 	defer fi.Close()
 	if err != nil {
-		log.err(err)
+		log.Fatal(err)
 	}
 
 	img, _, err := image.DecodeConfig(fi)
 	if err != nil {
-		log.err(err)
+		log.Fatal(err)
 	}
 	return img.Width, img.Height
 }
