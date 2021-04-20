@@ -172,7 +172,6 @@ func GenerateRandomString(n int) string {
 }
 
 // Receive image and return name and size of it
-<<<<<<< HEAD
 func upload(w http.ResponseWriter, r *http.Request) {
 	token := r.Header.Get("Authorization")
 	if len(token) < 7 {
@@ -191,26 +190,6 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		msg := `
 	{
 		"Please enter a valid token"
-=======
-func addImage(w http.ResponseWriter, r *http.Request) {
-	var img Image
-	msg := ""
-	json.NewDecoder(r.Body).Decode(&img)
-	if img.Token == users.Token {
-		msg=`
-		{
-			"Message": "An image has been successfully uploaded",
-			"Filename": "`+img.Name+`",
-			"Size": "`+getImageSize(img.Name)+`kb",
-		}
-		`
-	} else {
-		msg = `
-		{
-			"Please enter a valid token"
-		}
-		`
->>>>>>> a04b572492283814be8f0fb87a8d025dd468f03a
 	}
 `
 		w.Write([]byte(msg))
