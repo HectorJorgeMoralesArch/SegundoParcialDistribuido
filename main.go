@@ -18,7 +18,7 @@ var online = make(map[string]string)
 var users = make(map[string]string)
 
 type Image struct{
-	Path, Name string
+	Token, Path, Name string
 	x, y, size int
 }
 // Global variable user. All functions are able to access to it
@@ -183,14 +183,14 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 	msg:=""
 	json.NewDecoder(r.Body).Decode(&img)
 	if img.Token == users.Token {
-		dim=getImageDimension(img.Name)
+		w,h:=getImageDimension(img.Name)
 		msg=`
 		{
 			"Message": "An image has been successfully uploaded",
 			"Filename": "`+img.Name+`",
 			"Size": "`+getImageSize(img.Name)+`",
-			"Width": "`+dim[0]+`",
-			"Height": "`+dim[1]+`",
+			"Width": "`+w+`",
+			"Height": "`+h+`",
 		}
 		`
 	}else{
