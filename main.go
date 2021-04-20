@@ -3,15 +3,25 @@ package main
 import (
 	_ "image/jpeg"
 	_ "image/png"
-	"log"
 	"math/rand"
 	"net/http"
-	"os"
 	"strings"
 	"time"
-
+	//If it says that Go could not found the mrepository just type
+	//go get github.com/gorilla/mux
+	//to fix it
 	"github.com/gorilla/mux"
 )
+//Login
+//curl -u username:password http://localhost:8080/login
+//Logout
+//curl -H "Authorization: Bearer ONRhfKsUOH" http://localhost:8080/logout
+//Upload
+//curl -F 'dc-labs/challenges/second-partial/test.jpg' -H "Authorization: Bearer ONRhfKsUOH" http://localhost:8080/upload
+//curl -F 'dc-labs/challenges/second-partial/architecture.png' -H "Authorization: Bearer ONRhfKsUOH" http://localhost:8080/upload
+//Status
+//curl -H "Authorization: Bearer ONRhfKsUOH" http://localhost:8080/status
+
 
 // Logged: Structure to store logged in users info, key is Token, value is User
 var online = make(map[string]string)
@@ -19,14 +29,11 @@ var online = make(map[string]string)
 //Users: stores all users, key Username, value is Password
 var users = make(map[string]string)
 
-<<<<<<< HEAD
-=======
 type Image struct{
 	Token, Path, Name string
 	size int
 }
 
->>>>>>> a04b572492283814be8f0fb87a8d025dd468f03a
 // Global variable user. All functions are able to access to it
 func main() {
 	router := mux.NewRouter()
@@ -46,9 +53,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		msg := `
-	{
-		"Username and Password are required"
-	}
+{
+	"Username and Password are required"
+}
 `
 		w.Write([]byte(msg))
 		return
@@ -56,9 +63,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if !checkPass(usr, pwd) {
 		w.WriteHeader(http.StatusUnauthorized)
 		msg := `
-	{
-		"Invalid Username and/or Password"
-	}
+{
+	"Invalid Username and/or Password"
+}
 `
 		w.Write([]byte(msg))
 		return
@@ -66,10 +73,10 @@ func login(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	token := GenerateRandomString(10)
 	msg := `
-	{
-		"message": "Hi ` + usr + ` welcome to the DPIP System"
-		"token" "` + token + `"
-	}
+{
+	"message": "Hi ` + usr + ` welcome to the DPIP System"
+	"token" "` + token + `"
+}
 `
 	w.Write([]byte(msg))
 	online[token] = usr
@@ -88,9 +95,9 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	if len(token) < 7 {
 		w.WriteHeader(http.StatusUnauthorized)
 		msg := `
-	{
-		"Please enter a token" ` + token + `smiles
-	}
+{
+	"Please enter a token" ` + token + `smiles
+}
 `
 		w.Write([]byte(msg))
 		return
@@ -99,18 +106,18 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	if !loggedIn(token) {
 		w.WriteHeader(http.StatusUnauthorized)
 		msg := `
-	{
-		"Please enter a valid token"
-	}
+{
+	"Please enter a valid token"
+}
 `
 		w.Write([]byte(msg))
 		return
 	}
 	w.WriteHeader(http.StatusOK)
 	msg := `
-	{
-		"message": "Bye ` + online[token] + `, your token has been revoked"
-	}
+{
+	"message": "Bye ` + online[token] + `, your token has been revoked"
+}
 `
 	w.Write([]byte(msg))
 	delete(online, token)
@@ -129,9 +136,9 @@ func status(w http.ResponseWriter, r *http.Request) {
 	if len(token) < 7 {
 		w.WriteHeader(http.StatusUnauthorized)
 		msg := `
-	{
-		"Please enter a token" ` + token + `
-	}
+{
+	"Please enter a token" ` + token + `
+}
 `
 		w.Write([]byte(msg))
 		return
@@ -140,19 +147,19 @@ func status(w http.ResponseWriter, r *http.Request) {
 	if !loggedIn(token) {
 		w.WriteHeader(http.StatusUnauthorized)
 		msg := `
-	{
-		"Please enter a valid token"
-	}
+{
+	"Please enter a valid token"
+}
 `
 		w.Write([]byte(msg))
 		return
 	}
 	w.WriteHeader(http.StatusOK)
 	msg := `
-	{
-		"message": "Hi ` + online[token] + `, the DPIP System is Up and Running "
-		"time": "` + time.Now().Format("2006-01-02 15:04:05") + `"
-	}
+{
+	"message": "Hi ` + online[token] + `, the DPIP System is Up and Running "
+	"time": "` + time.Now().Format("2006-01-02 15:04:05") + `"
+}
 `
 	w.Write([]byte(msg))
 	return
@@ -174,12 +181,13 @@ func GenerateRandomString(n int) string {
 // Receive image and return name and size of it
 func upload(w http.ResponseWriter, r *http.Request) {
 	token := r.Header.Get("Authorization")
+	msg:=""
 	if len(token) < 7 {
 		w.WriteHeader(http.StatusUnauthorized)
 		msg := `
-	{
-		"Please enter a token" ` + token + `
-	}
+{
+	"Please enter a token" ` + token + `
+}
 `
 		w.Write([]byte(msg))
 		return
@@ -188,9 +196,9 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	if !loggedIn(token) {
 		w.WriteHeader(http.StatusUnauthorized)
 		msg := `
-	{
-		"Please enter a valid token"
-	}
+{
+	"Please enter a valid token"
+}
 `
 		w.Write([]byte(msg))
 		return
@@ -200,26 +208,21 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		msg := `
-	{
-		"There was an error while parsing the image"
-		"Error:" "` + err + `"
-	}
+{
+	"There was an error while parsing the image"
+	"Error:" "` + err.Error() + `"
+}
 `
 		w.Write([]byte(msg))
 		return
 	}
-
+	msg = `
+{
+	"message": "An image has been successfully uploaded",
+	"filename": "`+imgData.Filename+`",
+	"size": "`+string(imgData.Size)+`kb"
+}
+`
 	w.Write([]byte(msg))
 	return
-}
-
-// Retrieve image size
-func getImageSize(imgPath string) int64 {
-	fi, err := os.Stat(imgPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Get the size
-	size := fi.Size()
-	return size
 }
