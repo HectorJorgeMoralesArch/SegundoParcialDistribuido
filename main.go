@@ -1,26 +1,30 @@
 package main
 
 import (
-	"math/rand"
-	"net/http"
-	"strings"
-	"time"
-	"image"
+	"encoding/json"
 	_ "image/jpeg"
 	_ "image/png"
-	"github.com/gorilla/mux"
 	"log"
+	"math/rand"
+	"net/http"
+	"os"
+	"strings"
+	"time"
+
+	"github.com/gorilla/mux"
 )
 
-// Logged: Structure to store logged in users info
+// Logged: Structure to store logged in users info, key is Token, value is User
 var online = make(map[string]string)
 
+//Users: stores all users, key Username, value is Password
 var users = make(map[string]string)
 
-type Image struct{
+type Image struct {
 	Path, Name string
 	x, y, size int
 }
+
 // Global variable user. All functions are able to access to it
 func main() {
 	router := mux.NewRouter()
@@ -151,6 +155,7 @@ func status(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(msg))
 	return
 }
+
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 // GenerateRandomString generate a string of random characters of given length
@@ -164,37 +169,21 @@ func GenerateRandomString(n int) string {
 	return sb.String()
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Receive image and return name and size of it
 func addImage(w http.ResponseWriter, r *http.Request) {
 	var img Image
-	msg:=""
+	msg := ""
 	json.NewDecoder(r.Body).Decode(&img)
 	if img.Token == users.Token {
-		dim=getImageDimension(img.Name)
-		msg=`
+		msg = `
 		{
 			"Message": "An image has been successfully uploaded",
-			"Filename": "`+img.Name+`",
-			"Size": "`+getImageSize(img.Name)+`",
-			"Width": "`+dim[0]+`",
-			"Height": "`+dim[1]+`",
+			"Filename": "` + img.Name + `",
+			"Size": "` + getImageSize(img.Name) + `",
 		}
 		`
-	}else{
-		msg := `
+	} else {
+		msg = `
 		{
 			"Please enter a valid token"
 		}
@@ -203,28 +192,14 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(msg))
 	return
 }
+
 // Retrieve image size
-func getImageSize(imgPath string) (int64){
-	fi, err := os.Stat(imgPath);
+func getImageSize(imgPath string) int64 {
+	fi, err := os.Stat(imgPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	// Get the size
 	size := fi.Size()
 	return size
-}
-
-// Get image dimensions
-func getImageDimension(imgPath string) (int, int) {
-	fi, err := os.Open(imgPath)
-	defer fi.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	img, _, err := image.DecodeConfig(fi)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return img.Width, img.Height
 }
