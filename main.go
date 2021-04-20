@@ -17,6 +17,11 @@ var online = make(map[string]string)
 
 var users = make(map[string]string)
 
+struct Image{
+	var Token,Name
+	x:=0
+	y:=0
+}
 // Global variable user. All functions are able to access to it
 func main() {
 	router := mux.NewRouter()
@@ -176,8 +181,9 @@ func GenerateRandomString(n int) string {
 // Receive image and return name and size of it
 func addImage(w http.ResponseWriter, r *http.Request) {
 	var img Image
+	msg:=""
 	json.NewDecoder(r.Body).Decode(&img)
-	if img.Token == user.Token {
+	if img.Token == users.Token {
 		msg=`
 		{
 			"Message": "An image has been successfully uploaded",
@@ -201,7 +207,7 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 func getImageSize(imgPath string) (int64){
 	fi, err := os.Stat(imgPath);
 	if err != nil {
-		log.err("%s: %v\n", imgPath, err)
+		log.err(err)
 	}
 	// Get the size
 	size := fi.Size()
@@ -213,12 +219,12 @@ func getImageDimension(imgPath string) (int, int) {
 	fi, err := os.Open(imgPath)
 	defer fi.Close()
 	if err != nil {
-		log.err("%s: %v\n", imgPath, err)
+		log.err(err)
 	}
 
-	image, _, err := image.DecodeConfig(fi)
+	img, _, err := image.DecodeConfig(fi)
 	if err != nil {
-		log.err("%s: %v\n", imgPath, err)
+		log.err(err)
 	}
-	return image.Width, image.Height
+	return img.Width, img.Height
 }
