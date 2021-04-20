@@ -20,8 +20,13 @@ var online = make(map[string]string)
 //Users: stores all users, key Username, value is Password
 var users = make(map[string]string)
 
+<<<<<<< HEAD
 type Image struct {
 	Path, Name string
+=======
+type Image struct{
+	Token, Path, Name string
+>>>>>>> 50cc80c1d9df1500acf5f4666b6c40cb17d4459d
 	x, y, size int
 }
 
@@ -175,11 +180,22 @@ func addImage(w http.ResponseWriter, r *http.Request) {
 	msg := ""
 	json.NewDecoder(r.Body).Decode(&img)
 	if img.Token == users.Token {
+<<<<<<< HEAD
 		msg = `
 		{
 			"Message": "An image has been successfully uploaded",
 			"Filename": "` + img.Name + `",
 			"Size": "` + getImageSize(img.Name) + `",
+=======
+		w,h:=getImageDimension(img.Name)
+		msg=`
+		{
+			"Message": "An image has been successfully uploaded",
+			"Filename": "`+img.Name+`",
+			"Size": "`+getImageSize(img.Name)+`",
+			"Width": "`+w+`",
+			"Height": "`+h+`",
+>>>>>>> 50cc80c1d9df1500acf5f4666b6c40cb17d4459d
 		}
 		`
 	} else {
